@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meow</title>
+    <!-- Include Video.js CSS -->
+    <link href="https://vjs.zencdn.net/7.16.4/video-js.css" rel="stylesheet">
+    <!-- Include Video.js JavaScript -->
+    <script src="https://vjs.zencdn.net/7.16.4/video.js"></script>
+    <script src="{{url_for('static', filename='js/crop.js')}}"></script>
+</head>
+
+<body>
+    <video id="main-video" controls width="640" height="360">
+        <source src="{{video_path}}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <p>Start: <span id="start">0</span> End: <span id="end">0</span></p>
+    <p>Environment descriptions:</p>
+    <form action="javascript:recordStage();">
+        <label for="light">Light:</label>
+        <input type="radio" name="light" value="0"> the light is on
+        <input type="radio" name="light" value="1"> the light is off
+        <br>
+
+        <label for="drawer">Drawer:</label>
+        <input type="radio" name="drawer" value="0"> the drawer is open
+        <input type="radio" name="drawer" value="1"> the drawer is closed
+        <br>
+
+        <button type="submit">ok</button>
+    </form>
+    <!--<input type="button" value="crop">-->
+    <!--<input type="range" id="slider" name="frame-slider" min="0" max="100" value="0">-->
+</body>
+
+</html>
