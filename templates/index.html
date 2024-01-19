@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video.js Example</title>
+    <!-- Include Video.js CSS -->
+    <link href="https://vjs.zencdn.net/7.16.4/video-js.css" rel="stylesheet">
+    <!-- Include Video.js JavaScript -->
+    <script src="https://vjs.zencdn.net/7.16.4/video.js"></script>
+    <script src="{{url_for('static', filename='js/index.js')}}"></script>
+</head>
+
+<body>
+    <!-- Your video tag -->
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="360">
+        <source src="{{url_for('static', filename='data_v2/draw_cloth_light/videos/0/0/color.mp4')}}" type="video/mp4">
+        <!-- Other video sources and tracks go here -->
+    </video>
+    <input type="range" id="slider" name="frame-slider" min="0" max="100" value="0">
+</body>
+
+</html>

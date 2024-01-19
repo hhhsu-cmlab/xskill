@@ -1,23 +1,10 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var player = videojs('main-video');
+from flask import Flask, render_template, url_for
 
-    // Get the total number of frames in the video
-    player.on('loadedmetadata', function () {
-        var totalFrames = player.duration() * player.videoWidth();
-        document.getElementById('frame-slider').max = totalFrames;
-    });
+app = Flask(__name__, static_folder='datasets')
 
-    // Update the video frame based on slider value
-    document.getElementById('frame-slider').addEventListener('input', function () {
-        var frameNumber = this.value;
-        var timeInSeconds = frameNumber / player.videoWidth();
-        player.currentTime(timeInSeconds);
-    });
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-    // Update the slider value based on video time
-    player.on('timeupdate', function () {
-        var currentFrame = Math.floor(player.currentTime() * player.videoWidth());
-        document.getElementById('frame-slider').value = currentFrame;
-    });
-});
-
+if __name__ == '__main__':
+    app.run(debug=True)

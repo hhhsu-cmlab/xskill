@@ -152,7 +152,9 @@ dmypy.json
 cython_debug/
 
 
-datasets/
+datasets/data_v2/
+datasets/*.zip
+
 experiment/
 *.json
 outputs/
