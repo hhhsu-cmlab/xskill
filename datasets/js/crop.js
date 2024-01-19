@@ -49,6 +49,9 @@ function recordStage() {
         'end': parseFloat(cur_end, 10),
     });
 
+    new_time_str = `(${cur_start}, ${cur_end})`;
+    document.getElementById("timestamps-display").innerHTML += new_time_str + " ";
+    
     document.getElementById("content").value = JSON.stringify(msg);
 
     document.getElementById('start').textContent = cur_end;

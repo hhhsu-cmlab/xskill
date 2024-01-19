@@ -25,13 +25,13 @@
     </video>
     <p>Start: <span id="start">0</span> End: <span id="end">0</span></p>
     <button id="ok">ok</button>
-    <p>Timestamps for the stages:
-
+    <p id="timestamps-display">Timestamps for the stages: <br>
     </p>
 
     <input type="hidden" id="request-url" value="{{request.url}}">
     <form action="{{request.url}}", method="POST">
         <input type="hidden" name="content" id="content" value="">
+        <input type="submit" value="done">
     </form>
     <!--<input type="range" id="slider" name="frame-slider" min="0" max="100" value="0">-->
 </body>
