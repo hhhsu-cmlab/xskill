@@ -1,6 +1,5 @@
 // state variables
 let msg = [];
-let start = 0;
 
 window.addEventListener('load', function () {
 
@@ -36,31 +35,22 @@ window.addEventListener('load', function () {
     });
     */
 
-
+    document.getElementById("ok").addEventListener("click", () => {
+        recordStage();
+    })
 });
 
 function recordStage() {
-    var light = document.querySelector('input[name="light"]:checked').value;
-    var drawer = document.querySelector('input[name="drawer"]:checked').value;
     var cur_start = document.getElementById('start').textContent;
-    cur_start = parseInt(cur_start, 10);
     var cur_end = document.getElementById('end').textContent;
-    cur_end = parseInt(cur_end, 10);
 
     msg.push({
-        'start': cur_start,
-        'end': cur_end,
-        'light': light,
-        'drawer': drawer,
+        'start': parseFloat(cur_start, 10),
+        'end': parseFloat(cur_end, 10),
     });
 
-    console.log(msg);
+    document.getElementById("content").value = JSON.stringify(msg);
 
-    setStart(cur_start);
-}
-
-function setStart(st) {
-    start = st;
-    document.getElementById('start').textContent = start;
+    document.getElementById('start').textContent = cur_end;
 }
 

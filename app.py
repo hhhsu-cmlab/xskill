@@ -1,12 +1,31 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, request, render_template, url_for
 import numpy as np
 import imageio
 import json
 import cv2
 import os
 import pandas as pd
+from collections import defaultdict
 
 CAMERA_IDX = 0 # 0, 1, 2
+
+
+with open("datasets/config/data.json", "r") as f:
+    data = json.load(f)
+
+# open timestamps.csv to store timestamps
+timestamps_csv_path = "datasets/timestamps.csv"
+if os.path.exists(timestamps_csv_path):
+    timestamps_df = pd.read_csv(timestamps_csv_path)
+else:
+    print(f"Warning: {timestamps_csv_path} does not exist. \
+          Will create a new one")
+    timestamps_df = pd.DataFrame(columns=['camera_index', 'video_folder', 'video_index', 
+                                          'stage', 'start', 'end'])
+    timestamps_df.to_csv(timestamps_csv_path, index=False)
+
+
+
 
 app = Flask(__name__, static_folder='datasets')
 
@@ -28,8 +47,33 @@ def show_crop_page(folder: str):
 @app.route('/<string:folder>/<string:video_idx>')
 def show_crop(folder: str, video_idx: str):
     video_path = url_for('static', filename=f'data_v2/{folder}/videos/{video_idx}/{str(CAMERA_IDX)}/color.mp4')
-    return render_template('crop.html', video_path=video_path)
+    stages = data['data'][folder]['stages']
+    return render_template('crop.html', 
+                           video_path=video_path, 
+                           stages=stages, 
+                           video_folder=folder)
 
+@app.route('/<string:folder>/<string:video_idx>', methods=['POST'])
+def save(folder: str, video_idx: str):
+    msg = request.form.get("content")
+    if msg is None:
+        raise Exception("Something wrong with reading timestamps")
+    
+    timestamps = json.dumps(msg)
+    new_data = defaultdict(list)
+    for t in timestamps:
+        new_data['camera_index'].append(CAMERA_IDX)
+        new_data['video_folder'].append(folder)
+        new_data['video_index'].append(video_idx)
+        new_data['start'].append(t['start'])
+        new_data['end'].append(t['end'])
+        
+        # deal with stage
+        new_data['stage'].append(-1)
+
+    timestamps_df.append(new_data)
+    timestamps_df.to_csv(timestamps_csv_path, index=False)
+        
 
 def next_video(folder: str):
     '''

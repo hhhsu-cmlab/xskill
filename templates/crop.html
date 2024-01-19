@@ -13,26 +13,26 @@
 </head>
 
 <body>
+    <h3>Stages:
+        {% for stage in stages %}
+        <span>{{stage}} </span>
+        {% endfor %}
+    </h3>
+    <!--<input type="hidden" id="video_folder" value="{{video_folder}}">-->
     <video id="main-video" controls width="640" height="360">
         <source src="{{video_path}}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <p>Start: <span id="start">0</span> End: <span id="end">0</span></p>
-    <p>Environment descriptions:</p>
-    <form action="javascript:recordStage();">
-        <label for="light">Light:</label>
-        <input type="radio" name="light" value="0"> the light is on
-        <input type="radio" name="light" value="1"> the light is off
-        <br>
+    <button id="ok">ok</button>
+    <p>Timestamps for the stages:
 
-        <label for="drawer">Drawer:</label>
-        <input type="radio" name="drawer" value="0"> the drawer is open
-        <input type="radio" name="drawer" value="1"> the drawer is closed
-        <br>
+    </p>
 
-        <button type="submit">ok</button>
+    <input type="hidden" id="request-url" value="{{request.url}}">
+    <form action="{{request.url}}", method="POST">
+        <input type="hidden" name="content" id="content" value="">
     </form>
-    <!--<input type="button" value="crop">-->
     <!--<input type="range" id="slider" name="frame-slider" min="0" max="100" value="0">-->
 </body>
 
