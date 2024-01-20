@@ -154,6 +154,7 @@ cython_debug/
 
 datasets/data_v2/
 datasets/*.zip
+datasets/data
 
 experiment/
 *.json

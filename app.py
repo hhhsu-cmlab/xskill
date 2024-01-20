@@ -53,6 +53,7 @@ def show_crop_page(folder: str):
 @app.route('/<string:folder>/<string:video_idx>')
 def show_crop(folder: str, video_idx: str):
     video_path = url_for('static', filename=f'data_v2/{folder}/videos/{video_idx}/{str(CAMERA_IDX)}/color.mp4')
+    # this try/except still does not detect if the video_path exists
     try:
         stages = data['data'][folder]['stages']
         return render_template('crop.html', 
