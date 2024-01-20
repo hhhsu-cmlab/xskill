@@ -37,4 +37,10 @@ env_d.columns = colnames
 
 dat = pd.concat([dat, env_d], axis=1)
 
+# add episode_index column
+# episode_index corresponds to the video at position `episode_index` of data.h5
+# episode_index = -1 means the corresponding video is not made yet
+if "episode_index" not in dat:
+    dat["episode_index"] = -1
+
 dat.to_csv("datasets/data/labels_complete.csv")

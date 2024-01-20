@@ -9,9 +9,37 @@ import json
 from tqdm import tqdm
 
 N_FRAMES = 40
-VIDEO_WIDTH = 160
-VIDEO_HEIGHT = 160
-dat = pd.read_csv("datasets/data/labels_complete.csv")
+VID_SQUARE_SIZE = 256
+labels_complete_csv_path = "datasets/data/labels_complete.csv"
+dat = pd.read_csv(labels_complete_csv_path)
+
+cur_episode_idx = dat['episode_index'].max() + 1
+
+class Saver:
+    def __init__(self, label, start_idx, max_size=20):
+        self.max_size = max_size
+        self.start_idx = start_idx
+        self.label = label # label on filename of saved h5 data
+        self.items = []
+
+    def append(self, item):
+        self.items.append(item)
+        if len(self.items) >= self.max_size:
+            self._save()
+
+    def _save(self):
+        end_idx = self.start_idx + self.max_size - 1
+        filename = f"data_{self.label}_{self.start_idx}_{end_idx}.h5"
+        with h5py.File(f"datasets/data/{filename}", 'w') as f:
+            f.create_group("sim")
+            f["sim"].create_dataset("ims", data=np.array(self.items, dtype=np.uint8))
+        print(f'Videos of size {self.max_size} saved.')
+
+        self.items = []
+        self.start_idx = end_idx + 1
+
+saver_full = Saver(label="full", start_idx=cur_episode_idx, max_size=20)
+saver_square = Saver(label="square", start_idx=cur_episode_idx, max_size=50)
 
 ####### process videos #######
 
@@ -22,10 +50,17 @@ def extract_frames(input_file, start_time, end_time, num_frames):
     # resizing
     # without resizing, the script would get killed when it is about 48% complete
     #  Out of memory: Killed process 13933 (python) total-vm:7816116kB, anon-rss:6783396kB, file-rss:0kB, shmem-rss:0kB, UID:1000 pgtables:14656kB oom_score_adj:0
-    video_clip = resize(video_clip, width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
+    #video_clip = resize(video_clip, width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
 
     # Calculate the time points for the frames
     time_points = np.linspace(start_time, end_time, num_frames)
+
+    '''
+    frames = []; square_frames = []
+    for t in time_points:
+        frm = video_clip.get_frame(t)
+        w, h = frm.shape
+    '''
 
     # Extract frames at the specified time points
     frames = [video_clip.get_frame(t) for t in time_points]
@@ -42,17 +77,12 @@ def frames_for(i: int):
     video_path = f"datasets/data_v2/{v_folder}/videos/{v_idx}/{cam_idx}/color.mp4"
     return extract_frames(video_path, dat['start'][i], dat['end'][i], N_FRAMES)
 
-videos = []
-nrow = len(dat.index)
-for i in tqdm(range(3)):
-    videos.append(frames_for(i))
-videos = np.array(videos, dtype=np.uint8)
+undone_rows = np.where(dat['episode_index'] == -1)[0]
+for i, r in tqdm(enumerate(undone_rows)):
+    saver_full.append(frames_for(r))
 
-print(f"Shape of all videos: {videos.shape}")
+    # update index i to done
+    dat['episode_index'][r] = cur_episode_idx
+    cur_episode_idx += 1
 
-####### save #######
-
-with h5py.File("datasets/data/data.h5", 'w') as f:
-    sim_data = f.create_group('sim')
-    sim_data.create_dataset('ims', data=videos)  
-
+dat.to_csv("datasets/data/test/labels_complete.csv", index=False)
